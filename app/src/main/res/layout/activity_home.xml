@@ -47,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#56000000"
+            android:contentDescription="@string/entries"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
             android:text="@string/entries"
@@ -60,41 +61,41 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/platsCardView"
+        android:id="@+id/dishesCardView"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:contentDescription="@string/plats"
+        android:contentDescription="@string/dishes"
         app:cardCornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/entriesCardView">
 
         <ImageView
-            android:id="@+id/platsImageView"
+            android:id="@+id/dishesImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/entries"
+            android:contentDescription="@string/dishes"
             android:importantForAccessibility="no"
             android:scaleType="centerCrop"
             android:src="@drawable/plats" />
 
         <TextView
-            android:id="@+id/platsTextView"
+            android:id="@+id/dishesTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#56000000"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
-            android:text="@string/plats"
+            android:text="@string/dishes"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/platsImageView"
-            app:layout_constraintTop_toTopOf="@id/platsImageView" />
+            app:layout_constraintStart_toStartOf="@id/dishesImageView"
+            app:layout_constraintTop_toTopOf="@id/dishesImageView" />
 
     </androidx.cardview.widget.CardView>
 
@@ -109,7 +110,7 @@
         app:cardCornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/platsCardView">
+        app:layout_constraintTop_toBottomOf="@+id/dishesCardView">
 
         <ImageView
             android:id="@+id/dessetImageView"
