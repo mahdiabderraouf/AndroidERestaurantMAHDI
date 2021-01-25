@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">E-Restaurant MAHDI</string>
-    <string name="button_text">Sign up now</string>
+    <string name="greeting">Welcome to e-restaurant</string>
+    <string name="entries">Entries</string>
+    <string name="plats">Plats</string>
+    <string name="dessert">Déserts</string>
 </resources>
