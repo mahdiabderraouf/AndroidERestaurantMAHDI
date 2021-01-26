@@ -3,8 +3,8 @@ package fr.isen.mahdi.androiderestaurant
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.AlarmClock.EXTRA_MESSAGE
-import androidx.cardview.widget.CardView
+import fr.isen.mahdi.androiderestaurant.category.CategoryActivity
+import fr.isen.mahdi.androiderestaurant.category.ItemType
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
