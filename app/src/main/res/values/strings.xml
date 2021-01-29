@@ -4,4 +4,6 @@
     <string name="entries">Entries</string>
     <string name="dishes">Dishes</string>
     <string name="dessert">Désserts</string>
+    <string name="ingredients">Ingrédients</string>
+    <string name="cart">Panier</string>
 </resources>

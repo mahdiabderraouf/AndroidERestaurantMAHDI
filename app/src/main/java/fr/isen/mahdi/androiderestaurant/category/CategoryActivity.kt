@@ -1,5 +1,6 @@
 package fr.isen.mahdi.androiderestaurant.category
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
@@ -11,9 +12,12 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.*
 import com.google.gson.GsonBuilder
+import fr.isen.mahdi.androiderestaurant.CellClickListener
+import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity
 import fr.isen.mahdi.androiderestaurant.HomeActivity.Companion.CATEGORY_NAME
 import fr.isen.mahdi.androiderestaurant.R
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityCategoryBinding
+import fr.isen.mahdi.androiderestaurant.network.Dish
 import fr.isen.mahdi.androiderestaurant.network.MenuResult
 import org.json.JSONObject
 
@@ -22,7 +26,7 @@ enum class ItemType {
     ENTRIES, DISHES, DESSERT
 }
 
-class CategoryActivity : AppCompatActivity() {
+class CategoryActivity : AppCompatActivity(), CellClickListener {
     private lateinit var binding: ActivityCategoryBinding
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,10 +76,23 @@ class CategoryActivity : AppCompatActivity() {
             it.name == getCategoryTitleFR(category)
         }
         if (selectedCategory != null) {
-            val adapter = CategoryAdapter(selectedCategory.items)
+            // CellClickListenner = this because this implements CellClickListenner
+            val adapter = CategoryAdapter(selectedCategory.items, this)
             binding.recyclerView.layoutManager = LinearLayoutManager(this)
             binding.recyclerView.adapter = adapter
         }
+    }
+
+    override fun onCellClickListener(data: Dish) {
+        val intent = Intent(this, DishDetailActivity::class.java).apply {
+            putExtra(DISH, data)
+        }
+        startActivity(intent)
+    }
+
+
+    companion object {
+        const val DISH = "DISH"
     }
 
     private fun parseResult(response: JSONObject): MenuResult? {
