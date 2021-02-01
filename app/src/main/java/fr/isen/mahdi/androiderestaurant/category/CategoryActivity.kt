@@ -1,5 +1,6 @@
 package fr.isen.mahdi.androiderestaurant.category
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.*
 import com.google.gson.GsonBuilder
+import fr.isen.mahdi.androiderestaurant.BaseActivity
 import fr.isen.mahdi.androiderestaurant.CellClickListener
 import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity
 import fr.isen.mahdi.androiderestaurant.HomeActivity.Companion.CATEGORY_NAME
@@ -26,7 +28,7 @@ enum class ItemType {
     ENTRIES, DISHES, DESSERT
 }
 
-class CategoryActivity : AppCompatActivity(), CellClickListener {
+class CategoryActivity : BaseActivity(), CellClickListener {
     private lateinit var binding: ActivityCategoryBinding
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +36,14 @@ class CategoryActivity : AppCompatActivity(), CellClickListener {
         binding = ActivityCategoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val title = findViewById<TextView>(R.id.categoryTitleTextView)
+        val title = binding.categoryTitleTextView
 
         val selectedCategory: ItemType? = intent.getSerializableExtra(CATEGORY_NAME) as ItemType?
+
+        binding.swipeLayout.setOnRefreshListener {
+            resetCache()
+            loadList(selectedCategory)
+        }
 
         title.text = getCategoryTitle(selectedCategory)
 
@@ -45,42 +52,68 @@ class CategoryActivity : AppCompatActivity(), CellClickListener {
     }
 
     private fun loadList(category: ItemType?) {
-        // Instantiate the cache
-        val cache = DiskBasedCache(cacheDir, 1024 * 1024) // 1MB cap
-
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        val network = BasicNetwork(HurlStack())
-        val queue = RequestQueue(cache, network).apply {
-            start()
+        resultFromCache()?.let {
+            // La requete est en cache
+            onSuccess(parseResult(it, category))
+        } ?: run {
+            val queue = Volley.newRequestQueue(this)
+            val url = "http://test.api.catering.bluecodegames.com/menu"
+            val postData = JSONObject()
+            postData.put("id_shop", "1")
+            val request = JsonObjectRequest(
+                    Request.Method.POST,
+                    url,
+                    postData,
+                    Response.Listener { response ->
+                        binding.swipeLayout.isRefreshing = false
+                        cacheResult(response.toString())
+                        onSuccess(parseResult(response.toString(), category))
+                    },
+                    Response.ErrorListener { error ->
+                        binding.swipeLayout.isRefreshing = false
+                        onFailure(error)
+                    }
+            )
+            queue.add(request)
         }
-        val url = "http://test.api.catering.bluecodegames.com/menu"
-        val postData = JSONObject()
-        postData.put("id_shop", "1")
-        val request = JsonObjectRequest(
-            Request.Method.POST,
-            url,
-            postData,
-            Response.Listener { response ->
-                onSuccess(response, category)
-            },
-            Response.ErrorListener { error ->
-                onFailure(error)
-            }
-        )
-        queue.add(request)
     }
 
-    private fun onSuccess(response: JSONObject, category: ItemType?) {
-        val menuResult = parseResult(response)
-        val selectedCategory = menuResult?.data?.firstOrNull {
-            it.name == getCategoryTitleFR(category)
-        }
-        if (selectedCategory != null) {
-            // CellClickListenner = this because this implements CellClickListenner
-            val adapter = CategoryAdapter(selectedCategory.items, this)
+    private fun resultFromCache(): String? {
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(REQUEST_CACHE, null)
+    }
+
+    private fun parseResult(response: String, selectedItem: ItemType?): List<Dish>? {
+        val menuResult = GsonBuilder().create().fromJson(response, MenuResult::class.java)
+        val items = menuResult.data.firstOrNull { it.name == getCategoryTitleFR(selectedItem) }
+        return items?.items
+    }
+
+    private fun cacheResult(response: String) {
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(REQUEST_CACHE, response)
+        editor.apply()
+    }
+
+    private fun resetCache() {
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(REQUEST_CACHE)
+        editor.apply()
+    }
+
+    private fun onSuccess(dishes: List<Dish>?) {
+        dishes?.let {
+            // CellClickListener = this because this implements CellClickListener
+            val adapter = CategoryAdapter(it, this)
             binding.recyclerView.layoutManager = LinearLayoutManager(this)
             binding.recyclerView.adapter = adapter
         }
+    }
+
+    private fun onFailure(error: VolleyError) {
+        Log.d("Request", error.toString())
     }
 
     override fun onCellClickListener(data: Dish) {
@@ -88,19 +121,6 @@ class CategoryActivity : AppCompatActivity(), CellClickListener {
             putExtra(DISH, data)
         }
         startActivity(intent)
-    }
-
-
-    companion object {
-        const val DISH = "DISH"
-    }
-
-    private fun parseResult(response: JSONObject): MenuResult? {
-        return GsonBuilder().create().fromJson(response.toString(), MenuResult::class.java)
-    }
-
-    private fun onFailure(error: VolleyError) {
-        Log.d("Request", error.toString())
     }
 
     private fun getCategoryTitle(item: ItemType?): String {
@@ -119,5 +139,11 @@ class CategoryActivity : AppCompatActivity(), CellClickListener {
             ItemType.DESSERT -> "Desserts"
             else -> ""
         }
+    }
+
+    companion object {
+        const val DISH = "DISH"
+        const val USER_PREFERENCES_NAME = "USER_PREFERENCES_NAME"
+        const val REQUEST_CACHE = "REQUEST_CACHE"
     }
 }

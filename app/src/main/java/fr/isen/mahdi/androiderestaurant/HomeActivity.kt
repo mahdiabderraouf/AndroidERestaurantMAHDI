@@ -10,9 +10,8 @@ import fr.isen.mahdi.androiderestaurant.category.ItemType
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityHomeBinding
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var topToolbar: androidx.appcompat.widget.Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +29,6 @@ class HomeActivity : AppCompatActivity() {
         binding.dessetCardView.setOnClickListener {
             startCategoryActivity(ItemType.DESSERT)
         }
-
     }
 
     private fun startCategoryActivity(type: ItemType) {

@@ -2,27 +2,26 @@ package fr.isen.mahdi.androiderestaurant.detail
 
 import PhotoSlideFragment
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import fr.isen.mahdi.androiderestaurant.BaseActivity
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityDishDetailBinding
 import fr.isen.mahdi.androiderestaurant.network.Dish
 import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.DISH
+import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.USER_PREFERENCES_NAME
+import fr.isen.mahdi.androiderestaurant.network.Basket
+import fr.isen.mahdi.androiderestaurant.network.BasketItem
 
-class DishDetailActivity : AppCompatActivity() {
+class DishDetailActivity : BaseActivity() {
     private lateinit var binding: ActivityDishDetailBinding
-
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private var imageCount = 0
-    private var quantity = 0
+    private var quantity = 1
     private lateinit var dish: Dish
     private var price = 0
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDishDetailBinding.inflate(layoutInflater)
@@ -33,15 +32,10 @@ class DishDetailActivity : AppCompatActivity() {
         binding.imagesCarousel.adapter = pagerAdapter
 
         dish = intent.getSerializableExtra(DISH) as Dish
-        price = dish.prices[0].price.toInt()
         imageCount = dish.images.count()
+        price = dish.prices[0].price.toInt()
 
-        binding.dishIngredients.text = dish.ingredients.joinToString {
-            it.name
-        }
-        binding.dishDetailName.text = dish.name
-        binding.dishDetailPrice.text = "$price $"
-        binding.quantityTextView.text = quantity.toString()
+        setUpUI(dish)
 
         binding.btnIncrement.setOnClickListener {
             incrementQuantity()
@@ -49,25 +43,38 @@ class DishDetailActivity : AppCompatActivity() {
         binding.btnDecrement.setOnClickListener {
             decrementQuantity()
         }
+        binding.btnAddToCart.setOnClickListener {
+            addToBasket(dish, quantity)
+        }
+    }
+    
+    @SuppressLint("SetTextI18n")
+    private fun setUpUI(dish: Dish) {
+        binding.dishIngredients.text = dish.ingredients.joinToString {
+            it.name
+        }
+        binding.dishDetailName.text = dish.name
+        binding.dishDetailPrice.text = "$price $"
+        binding.quantityTextView.text = quantity.toString()
+        binding.btnAddToCart.text = "Total ${price * quantity} $"
     }
 
     private fun incrementQuantity() {
         quantity++
-        updatePrice()
-        binding.quantityTextView.text = quantity.toString()
+        updateUI()
     }
 
     private fun decrementQuantity() {
-        if (quantity > 0) {
+        if (quantity > 1) {
             quantity--
-            updatePrice()
-            binding.quantityTextView.text = quantity.toString()
+            updateUI()
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updatePrice() {
+    private fun updateUI() {
         binding.btnAddToCart.text = "Total ${price * quantity} $"
+        binding.quantityTextView.text = quantity.toString()
     }
 
     override fun onBackPressed() {
@@ -79,6 +86,26 @@ class DishDetailActivity : AppCompatActivity() {
             // Otherwise, select the previous step.
             binding.imagesCarousel.currentItem = binding.imagesCarousel.currentItem - 1
         }
+    }
+
+    private fun addToBasket(dish: Dish, quantity: Int) {
+        val basket = Basket.getBasket(this)
+        basket.addItem(BasketItem(dish, quantity))
+        refreshMenu(basket)
+        basket.save(this)
+    }
+
+    private fun refreshMenu(basket: Basket) {
+        val count = basket.count
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt(BASKET_COUNT, count)
+        editor.apply()
+        invalidateOptionsMenu()
+    }
+
+    companion object {
+        const val BASKET_COUNT = "BASKET_COUNT"
     }
 
     private inner class PhotoSlideAdapter(fa: AppCompatActivity) : FragmentStateAdapter(fa) {
