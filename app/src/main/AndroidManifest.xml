@@ -13,9 +13,10 @@
         android:theme="@style/Theme.AndroidERestaurantMAHDI"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".BasketActivity"></activity>
-        <activity android:name=".detail.DishDetailActivity"></activity>
-        <activity android:name=".category.CategoryActivity"></activity>
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".basket.BasketActivity" />
+        <activity android:name=".detail.DishDetailActivity" />
+        <activity android:name=".category.CategoryActivity" />
         <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

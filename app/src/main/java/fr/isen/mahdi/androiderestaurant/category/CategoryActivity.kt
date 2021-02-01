@@ -4,21 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
-import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.*
 import com.google.gson.GsonBuilder
 import fr.isen.mahdi.androiderestaurant.BaseActivity
-import fr.isen.mahdi.androiderestaurant.CellClickListener
+import fr.isen.mahdi.androiderestaurant.detail.DishCellClickListener
 import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity
 import fr.isen.mahdi.androiderestaurant.HomeActivity.Companion.CATEGORY_NAME
 import fr.isen.mahdi.androiderestaurant.R
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityCategoryBinding
+import fr.isen.mahdi.androiderestaurant.network.Basket.Companion.USER_PREFERENCES_NAME
 import fr.isen.mahdi.androiderestaurant.network.Dish
 import fr.isen.mahdi.androiderestaurant.network.MenuResult
 import org.json.JSONObject
@@ -28,7 +26,8 @@ enum class ItemType {
     ENTRIES, DISHES, DESSERT
 }
 
-class CategoryActivity : BaseActivity(), CellClickListener {
+class CategoryActivity : BaseActivity(),
+    DishCellClickListener {
     private lateinit var binding: ActivityCategoryBinding
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,7 +142,6 @@ class CategoryActivity : BaseActivity(), CellClickListener {
 
     companion object {
         const val DISH = "DISH"
-        const val USER_PREFERENCES_NAME = "USER_PREFERENCES_NAME"
         const val REQUEST_CACHE = "REQUEST_CACHE"
     }
 }

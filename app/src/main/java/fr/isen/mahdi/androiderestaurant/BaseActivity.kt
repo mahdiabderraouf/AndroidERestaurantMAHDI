@@ -1,15 +1,15 @@
 package fr.isen.mahdi.androiderestaurant
 
 import android.content.Context
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuInflater
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.USER_PREFERENCES_NAME
-import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity
-import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity.Companion.BASKET_COUNT
-import fr.isen.mahdi.androiderestaurant.network.Basket
+import fr.isen.mahdi.androiderestaurant.basket.BasketActivity
+import fr.isen.mahdi.androiderestaurant.network.Basket.Companion.BASKET_COUNT
+import fr.isen.mahdi.androiderestaurant.network.Basket.Companion.USER_PREFERENCES_NAME
 
 open class BaseActivity: AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -24,7 +24,8 @@ open class BaseActivity: AppCompatActivity() {
         countText.text = count.toString()
 
         menuView.setOnClickListener{
-            // Start basket activity
+            intent = Intent(this, BasketActivity::class.java)
+            startActivity(intent)
         }
         return true
     }

@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import fr.isen.mahdi.androiderestaurant.databinding.SliderItemBinding
 
-class PhotoSlideFragment(val image: String) : Fragment() {
+class PhotoSlideFragment(private val image: String?) : Fragment() {
     private lateinit var binding: SliderItemBinding
 
     override fun onCreateView(
@@ -19,6 +19,8 @@ class PhotoSlideFragment(val image: String) : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Picasso.get().load(image).into(binding.dishImageSlide)
+        image?.let {
+            Picasso.get().load(image).into(binding.dishImageSlide)
+        }
     }
 }

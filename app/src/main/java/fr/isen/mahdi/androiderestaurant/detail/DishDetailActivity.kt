@@ -2,7 +2,6 @@ package fr.isen.mahdi.androiderestaurant.detail
 
 import PhotoSlideFragment
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -11,7 +10,6 @@ import fr.isen.mahdi.androiderestaurant.BaseActivity
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityDishDetailBinding
 import fr.isen.mahdi.androiderestaurant.network.Dish
 import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.DISH
-import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.USER_PREFERENCES_NAME
 import fr.isen.mahdi.androiderestaurant.network.Basket
 import fr.isen.mahdi.androiderestaurant.network.BasketItem
 
@@ -20,7 +18,7 @@ class DishDetailActivity : BaseActivity() {
     private var imageCount = 0
     private var quantity = 1
     private lateinit var dish: Dish
-    private var price = 0
+    private var price: Float = 0.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +31,8 @@ class DishDetailActivity : BaseActivity() {
 
         dish = intent.getSerializableExtra(DISH) as Dish
         imageCount = dish.images.count()
-        price = dish.prices[0].price.toInt()
+        price = dish.prices[0].price.toFloat()
+        quantity = getCurrentDishQuantity(dish)
 
         setUpUI(dish)
 
@@ -91,17 +90,23 @@ class DishDetailActivity : BaseActivity() {
     private fun addToBasket(dish: Dish, quantity: Int) {
         val basket = Basket.getBasket(this)
         basket.addItem(BasketItem(dish, quantity))
-        refreshMenu(basket)
+        refreshMenu()
         basket.save(this)
     }
 
-    private fun refreshMenu(basket: Basket) {
-        val count = basket.count
-        val sharedPreferences = getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt(BASKET_COUNT, count)
-        editor.apply()
+    private fun refreshMenu() {
         invalidateOptionsMenu()
+    }
+
+    private fun getCurrentDishQuantity(dish: Dish): Int {
+        val basket = Basket.getBasket(this)
+        val selectedDish = basket.items.firstOrNull {
+            it.dish.name == dish.name
+        }
+        selectedDish?.let {
+            return selectedDish.quantity
+        }
+        return 1
     }
 
     companion object {

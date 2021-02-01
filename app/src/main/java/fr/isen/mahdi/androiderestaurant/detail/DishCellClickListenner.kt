@@ -1,7 +1,7 @@
-package fr.isen.mahdi.androiderestaurant
+package fr.isen.mahdi.androiderestaurant.detail
 
 import fr.isen.mahdi.androiderestaurant.network.Dish
 
-interface CellClickListener {
+interface DishCellClickListener {
     fun onCellClickListener(data: Dish)
 }

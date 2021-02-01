@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import fr.isen.mahdi.androiderestaurant.CellClickListener
+import fr.isen.mahdi.androiderestaurant.detail.DishCellClickListener
 import fr.isen.mahdi.androiderestaurant.databinding.DishesCellBinding
 import fr.isen.mahdi.androiderestaurant.network.Dish
 
-class CategoryAdapter(private val dishes: List<Dish>, private val cellClickListener: CellClickListener): RecyclerView.Adapter<CategoryAdapter.DishesViewHolder>() {
+class CategoryAdapter(private val dishes: List<Dish>, private val cellClickListener: DishCellClickListener): RecyclerView.Adapter<CategoryAdapter.DishesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishesViewHolder {
         return DishesViewHolder(DishesCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
