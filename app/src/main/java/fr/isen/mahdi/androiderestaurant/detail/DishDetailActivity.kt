@@ -13,6 +13,7 @@ import fr.isen.mahdi.androiderestaurant.category.CategoryActivity.Companion.DISH
 import fr.isen.mahdi.androiderestaurant.network.Basket
 import fr.isen.mahdi.androiderestaurant.network.BasketItem
 
+
 class DishDetailActivity : BaseActivity() {
     private lateinit var binding: ActivityDishDetailBinding
     private var imageCount = 0

@@ -6,4 +6,12 @@
     <string name="dessert">Désserts</string>
     <string name="ingredients">Ingrédients</string>
     <string name="cart">Panier</string>
+    <string name="register">Créer un compte</string>
+    <string name="firstname">Prénom</string>
+    <string name="lastname">Nom</string>
+    <string name="password">Mot de passe</string>
+    <string name="adresse">Adresse</string>
+    <string name="email">Email</string>
+    <string name="login">Se connecter</string>
+    <string name="already_have_account">J\'ai dèja un compte</string>
 </resources>

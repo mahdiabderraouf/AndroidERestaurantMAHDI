@@ -19,8 +19,10 @@ class PhotoSlideFragment(private val image: String?) : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        image?.let {
-            Picasso.get().load(image).into(binding.dishImageSlide)
+        if (image != null) {
+            if (image.isNotEmpty()) {
+                Picasso.get().load(image).into(binding.dishImageSlide)
+            }
         }
     }
 }

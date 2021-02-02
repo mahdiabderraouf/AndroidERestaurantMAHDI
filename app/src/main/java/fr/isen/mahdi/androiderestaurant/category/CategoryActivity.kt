@@ -19,6 +19,7 @@ import fr.isen.mahdi.androiderestaurant.databinding.ActivityCategoryBinding
 import fr.isen.mahdi.androiderestaurant.network.Basket.Companion.USER_PREFERENCES_NAME
 import fr.isen.mahdi.androiderestaurant.network.Dish
 import fr.isen.mahdi.androiderestaurant.network.MenuResult
+import fr.isen.mahdi.androiderestaurant.utils.Loader
 import org.json.JSONObject
 
 
@@ -55,6 +56,8 @@ class CategoryActivity : BaseActivity(),
             // La requete est en cache
             onSuccess(parseResult(it, category))
         } ?: run {
+            val loader = Loader()
+            loader.show(this, "récupération du menu")
             val queue = Volley.newRequestQueue(this)
             val url = "http://test.api.catering.bluecodegames.com/menu"
             val postData = JSONObject()
@@ -66,9 +69,11 @@ class CategoryActivity : BaseActivity(),
                     Response.Listener { response ->
                         binding.swipeLayout.isRefreshing = false
                         cacheResult(response.toString())
+                        loader.hide(this)
                         onSuccess(parseResult(response.toString(), category))
                     },
                     Response.ErrorListener { error ->
+                        loader.hide(this)
                         binding.swipeLayout.isRefreshing = false
                         onFailure(error)
                     }

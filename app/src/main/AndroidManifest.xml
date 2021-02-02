@@ -13,6 +13,8 @@
         android:theme="@style/Theme.AndroidERestaurantMAHDI"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".login.LoginActivity"></activity>
+        <activity android:name=".register.RegisterActivity" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".basket.BasketActivity" />
         <activity android:name=".detail.DishDetailActivity" />
