@@ -82,6 +82,10 @@ class RegisterActivity : AppCompatActivity() {
         editor.putInt(ID_USER, user.id)
         editor.apply()
 
+        endActivity()
+    }
+
+    private fun endActivity() {
         setResult(Activity.RESULT_OK)
         finish()
     }
@@ -97,16 +101,12 @@ class RegisterActivity : AppCompatActivity() {
         return postData
     }
 
-    /**override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RegisterActivity.REQUEST_CODE) {
-            val sharedPreferences = getSharedPreferences(RegisterActivity.USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
-            val id_user = sharedPreferences.getInt(RegisterActivity.ID_USER, -1)
-            if (id_user != -1) {
-                sendOrder(id_user)
-            }
+            endActivity()
         }
-    }*/
+    }
 
     companion object {
         const val REQUEST_CODE = 111

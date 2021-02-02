@@ -12,7 +12,9 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.GsonBuilder
 import fr.isen.mahdi.androiderestaurant.databinding.ActivityLoginBinding
+import fr.isen.mahdi.androiderestaurant.network.RegisterResult
 import fr.isen.mahdi.androiderestaurant.network.User
 import org.json.JSONObject
 
@@ -46,9 +48,8 @@ class LoginActivity : AppCompatActivity() {
                 url,
                 postData,
                 Response.Listener { response ->
-                    Log.d("request", response.toString(2))
-                    /**val userResult = GsonBuilder().create().fromJson(response.toString(), RegisterResult::class.java)
-                    saveUser(userResult.data)*/
+                    val userResult = GsonBuilder().create().fromJson(response.toString(), RegisterResult::class.java)
+                    saveUser(userResult.data)
                 },
                 Response.ErrorListener { error ->
                     onFailure(error)

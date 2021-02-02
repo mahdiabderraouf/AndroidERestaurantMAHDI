@@ -7,7 +7,7 @@ import fr.isen.mahdi.androiderestaurant.detail.DishDetailActivity
 import java.io.File
 import java.io.Serializable
 
-class Basket (val items: MutableList<BasketItem>): Serializable {
+class Basket (var items: MutableList<BasketItem>): Serializable {
     var count: Int = 0
         get() {
             if (this.items.count() > 0) {
@@ -25,6 +25,10 @@ class Basket (val items: MutableList<BasketItem>): Serializable {
         } ?: run {
             items.add(item)
         }
+    }
+
+    fun clear() {
+        items.clear()
     }
 
     fun save(context: Context) {
