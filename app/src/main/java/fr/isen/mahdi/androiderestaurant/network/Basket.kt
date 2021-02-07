@@ -27,8 +27,9 @@ class Basket (var items: MutableList<BasketItem>): Serializable {
         }
     }
 
-    fun clear() {
+    fun clear(context: Context) {
         items.clear()
+        save(context)
     }
 
     fun save(context: Context) {

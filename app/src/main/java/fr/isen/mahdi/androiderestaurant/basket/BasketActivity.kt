@@ -1,11 +1,13 @@
 package fr.isen.mahdi.androiderestaurant.basket
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.Response
@@ -16,6 +18,7 @@ import fr.isen.mahdi.androiderestaurant.databinding.ActivityBasketBinding
 import fr.isen.mahdi.androiderestaurant.network.Basket
 import fr.isen.mahdi.androiderestaurant.network.BasketItem
 import fr.isen.mahdi.androiderestaurant.register.RegisterActivity
+import fr.isen.mahdi.androiderestaurant.utils.Loader
 import org.json.JSONObject
 
 class BasketActivity : AppCompatActivity(),
@@ -54,6 +57,8 @@ class BasketActivity : AppCompatActivity(),
         val message = basket.items.joinToString {
             it.dish.name + " " + it.quantity
         }
+        val loader = Loader()
+        loader.show(this, "Envoi de la commande")
         val queue = Volley.newRequestQueue(this)
         val url = "http://test.api.catering.bluecodegames.com/user/order"
         val postData = createPostData(user_id, message)
@@ -62,10 +67,13 @@ class BasketActivity : AppCompatActivity(),
             url,
             postData,
             Response.Listener {
+                loader.hide(this)
                 Toast.makeText(this, "Votre commande a été bien passée.", Toast.LENGTH_SHORT).show()
-                basket.clear()
+                basket.clear(this)
             },
             Response.ErrorListener { error ->
+                loader.hide(this)
+                Toast.makeText(this, "Votre commande a échoué, veuillez réessayer.", Toast.LENGTH_SHORT).show()
                 onFailure(error)
             }
         )
@@ -86,7 +94,7 @@ class BasketActivity : AppCompatActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == RegisterActivity.REQUEST_CODE) {
+        if(resultCode == Activity.RESULT_OK) {
             val sharedPreferences = getSharedPreferences(RegisterActivity.USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val idUser = sharedPreferences.getInt(RegisterActivity.ID_USER, -1)
             if (idUser != -1) {
